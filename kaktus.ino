@@ -23,13 +23,15 @@ class Player {
   }
   
   void shoot() {
-
+    ammo=0;
   }
+
 };
 
-struct Bullet {
-  int x=1;
-  int y=1;
+class Bullet {
+ public: 
+  int x=10;
+  int y=10;
   int speedMove=1;
 
   void moving() {
@@ -39,7 +41,8 @@ struct Bullet {
 
 Player left;
 Player right;
-
+Bullet bulletLeft;
+Bullet bulletRight;
 
 
 void setup() {
@@ -47,6 +50,7 @@ void setup() {
   ard.begin();
   ard.setFrameRate(45);
   right.x=117;
+  bulletRight.speedMove=-1;
 }
 
 void loop() {
@@ -57,17 +61,19 @@ void loop() {
   ard.clear();
 
 
-  players();
   controls();
 
   left.moving();
   right.moving();
 
+  if (left.shooting==true) bulletLeft.moving();
+
 
   ard.drawRect(left.x,left.y,8,8,WHITE);
   ard.drawRect(right.x,right.y,8,8,WHITE);
-  
-  ard.print("Hello!");
+  ard.drawRect(bulletLeft.x,bulletRight.y,2,2,WHITE);
+  ard.setCursor(50,0);
+  ard.print(left.x); // DLACZEGO 3??????
   ard.display();
 }
 
@@ -75,16 +81,26 @@ void controls() { //************CONTROLS******************
   
   if( ard.justPressed(LEFT_BUTTON) == true) {
     left.bounce();
-    if (left.ammo==true) {
+    bulletLeft.x=left.x;
+    bulletLeft.y=left.y;
 
-      left.shoot();
+    if (left.ammo==true) {
+   
+      left.shooting=true;
+     
+    }
+  }
+
+  if( ard.justPressed(B_BUTTON) == true) {
+    right.bounce();
+    if (right.ammo==true) {
+
+      right.shoot();
     }
   }
 
 
 }
 
-void players() { //************PLAYERS******************
 
-}
 

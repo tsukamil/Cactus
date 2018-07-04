@@ -2,25 +2,51 @@
 
 Arduboy2 ard;
 
-int leftX = 3;
-int leftY = 32;
-int leftSpeed = 1;
-bool leftAmmo=1;
-bool shootLeft=0;
-int leftBulletX=0;
-int leftBulletY=0;
 
-int rightX = 117;
-int rightY = 32;
-int rightSpeed=1;
-bool rightAmmo=1;
+class Player {
+  public:
+  int x=3;
+  int y=32;
+  int speedMove=1;
+  bool ammo=1;
+  bool shooting=0;
+
+  void bounce() {
+    speedMove=speedMove*-1;
+  }
+
+  void moving() {
+    y+=speedMove;
+    if (y<=0 and speedMove<0) bounce();
+    if (y>=56 and speedMove>0) bounce();
+    
+  }
+  
+  void shoot() {
+
+  }
+};
+
+struct Bullet {
+  int x=1;
+  int y=1;
+  int speedMove=1;
+
+  void moving() {
+    x+=speedMove;
+  }
+};
+
+Player left;
+Player right;
+
 
 
 void setup() {
   // put your setup code here, to run once:
   ard.begin();
   ard.setFrameRate(45);
-  
+  right.x=117;
 }
 
 void loop() {
@@ -33,22 +59,25 @@ void loop() {
 
   players();
   controls();
+
+  left.moving();
+  right.moving();
+
+
+  ard.drawRect(left.x,left.y,8,8,WHITE);
+  ard.drawRect(right.x,right.y,8,8,WHITE);
   
   ard.print("Hello!");
-  ard.drawRect(leftX,leftY,8,8,WHITE);
-  ard.drawRect(rightX,rightY,8,8,WHITE);
   ard.display();
 }
 
 void controls() { //************CONTROLS******************
   
   if( ard.justPressed(LEFT_BUTTON) == true) {
-    leftSpeed=leftSpeed*-1;
-    if (leftAmmo==true) {
-      leftAmmo=0;
-      leftBulletX=leftX;
-      leftBulletY=leftY;
-      shootLeft=true;
+    left.bounce();
+    if (left.ammo==true) {
+
+      left.shoot();
     }
   }
 
@@ -56,18 +85,6 @@ void controls() { //************CONTROLS******************
 }
 
 void players() { //************PLAYERS******************
-   leftY+=leftSpeed;
 
-   if (leftY<=0 and leftSpeed<0) leftSpeed=leftSpeed*-1;
-   if (leftY>=56 and leftSpeed>0) leftSpeed=leftSpeed*-1;
-
-   if (shootLeft==true) {
-    leftBulletX+=2;
-    ard.drawRect(leftBulletX,leftBulletY,2,2,WHITE);
-    if (leftBulletX>128) {
-      leftAmmo=1;
-      shootLeft=false;
-    }
-    }
 }
 
